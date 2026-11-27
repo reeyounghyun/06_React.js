@@ -14,52 +14,59 @@
 //
 // ✅ 확인: [언어] 버튼을 누르면 인사말이 바뀌고, Page · Card 코드에는 lang이 한 글자도 없다
 // 📖 막히면: 09-2 예제
-import { useState } from 'react'
+import { createContext, useContext, useState } from "react";
 
 const TEXT = {
-  ko: { hello: '안녕하세요', bye: '안녕히 가세요' },
-  en: { hello: 'Hello', bye: 'Goodbye' },
-}
+  ko: { hello: "안녕하세요", bye: "안녕히 가세요" },
+  en: { hello: "Hello", bye: "Goodbye" },
+};
 
 // TODO 1. Context 만들기
+const LangContext = createContext("ko"); // 기본값은 'ko'
 
-function Greeting({ lang }) {
+function Greeting() {
   // TODO 3
-  return <h3>👋 {TEXT[lang].hello}, 리액트님!</h3>
+  const lang = useContext(LangContext);
+  return <h3>👋 {TEXT[lang].hello}, 리액트님!</h3>;
 }
 
-function Footer({ lang }) {
+function Footer() {
   // TODO 3
-  return <small>{TEXT[lang].bye}</small>
+  const lang = useContext(LangContext); // props 대신 useContext로 lang을 꺼낸다
+  return <small>{TEXT[lang].bye}</small>;
 }
 
 // TODO 4. 아래 두 컴포넌트에서 lang 지우기
-function Card({ lang }) {
+function Card() {
   return (
     <article>
-      <Greeting lang={lang} />
-      <Footer lang={lang} />
+      <Greeting />
+      <Footer />
     </article>
-  )
+  );
 }
 
-function Page({ lang }) {
+function Page() {
   return (
     <section>
       <small>Page</small>
-      <Card lang={lang} />
+      <Card />
     </section>
-  )
+  );
 }
 
 export default function Mission() {
-  const [lang, setLang] = useState('ko')
+  const [lang, setLang] = useState("ko");
 
   return (
     <div>
-      <button onClick={() => setLang(lang === 'ko' ? 'en' : 'ko')}>언어: {lang}</button>
+      <button onClick={() => setLang(lang === "ko" ? "en" : "ko")}>
+        언어: {lang}
+      </button>
       {/* TODO 2. Context로 감싸기 */}
-      <Page lang={lang} />
+      <LangContext value={lang}>
+        <Page />
+      </LangContext>
     </div>
-  )
+  );
 }

@@ -16,34 +16,64 @@
 // ✅ 확인: 카드에서 찜을 누르면 Header 숫자가 바로 바뀐다. 다른 절에 갔다 와도 찜이 남아 있다
 // 💡 찜한 개수는 store에 따로 넣지 않는다 → ids로 계산할 수 있으니까 (05-6)
 // 📖 막히면: 09-4 예제 (stores/useCartStore.js)
-import { create } from 'zustand'
+import { create } from "zustand";
 
 const PRODUCTS = [
-  { id: 1, name: '🎧 무선 이어폰', price: 89000 },
-  { id: 2, name: '⌨️ 기계식 키보드', price: 129000 },
-  { id: 3, name: '🖱️ 버티컬 마우스', price: 45000 },
-  { id: 4, name: '🖥️ 모니터 받침대', price: 32000 },
-]
+  { id: 1, name: "🎧 무선 이어폰", price: 89000 },
+  { id: 2, name: "⌨️ 기계식 키보드", price: 129000 },
+  { id: 3, name: "🖱️ 버티컬 마우스", price: 45000 },
+  { id: 4, name: "🖥️ 모니터 받침대", price: 32000 },
+];
 
 // TODO 1. useWishStore
+const useWishStore = create((set) => ({
+  // state
+  ids: [],
+
+  // action
+  toggle: (id) =>
+    set((state) => ({
+      ids: state.ids.includes(id)
+        ? state.ids.filter((wishId) => wishId !== id) // 있으면 빼기
+        : [...state.ids, id], // 없으면 넣기
+    })),
+}));
 
 function Header() {
   // TODO 3
-  return <h3>💖 찜 0개</h3>
+  const ids = useWishStore((state) => state.ids);
+  return <h3>💖 찜 {ids.length}개</h3>;
 }
 
 function ProductCard({ product }) {
   // TODO 2
+  const ids = useWishStore((state) => state.ids); // TODO 2
+  const toggle = useWishStore((state) => state.toggle);
+  const isWished = ids.includes(product.id);
+
   return (
     <article>
-      {product.name} <small>{product.price.toLocaleString()}원</small> <button>♡ 찜</button>
+      {product.name} <small>{product.price.toLocaleString()}원</small>{" "}
+      <button onClick={() => toggle(product.id)}>
+        {isWished ? "♥ 찜함" : "♡ 찜"}
+      </button>
     </article>
-  )
+  );
 }
 
 function WishList() {
-  // TODO 4. (도전)
-  return <small>찜한 상품 이름이 여기에 나옵니다</small>
+  const ids = useWishStore((state) => state.ids); // TODO 4. (도전)
+  const wished = PRODUCTS.filter((product) => ids.includes(product.id));
+
+  if (wished.length === 0) return <small>찜한 상품이 없습니다</small>;
+
+  return (
+    <ul>
+      {wished.map((product) => (
+        <li key={product.id}>{product.name}</li>
+      ))}
+    </ul>
+  );
 }
 
 export default function Mission() {
@@ -56,5 +86,5 @@ export default function Mission() {
       <hr />
       <WishList />
     </div>
-  )
+  );
 }
