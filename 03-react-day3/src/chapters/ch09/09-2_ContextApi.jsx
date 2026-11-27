@@ -2,14 +2,13 @@ import { useContext, useState } from "react";
 import { UserContext } from "./contexts/UserContext";
 import { ThemeContext } from "./contexts/ThemeContext";
 /* 
-Context API로 props drilling없이 값을 전달하는 방버
-
-요약: 부모에 state 보유:user,theme가 있지만 자식(중간 컴포넌트)는 Layout,Sideber는 아무것도 전달받지 않고 있음.
+Context API로 props drilling 없이 값을 전달하는 방법
+요약: 부모에 state 보유: user, theme가 있지만 자식(중간 컴포넌트)인 Layout, Sidebar는 아무것도 전달받지 않고 있음.
 */
 
 /* 참고
- * props : 부모가 너겨준 값 (함수의 매개변수)
- * return :컴포넌트가 돌려주는 값 (화면JSX)
+ * props : 부모가 넘겨준 값 (함수의 매개변수)
+ * return : 컴포넌트가 돌려주는 값 (화면 JSX)
  * */
 function Tag({ children }) {
   return (
@@ -45,7 +44,7 @@ function Sidebar() {
   );
 }
 
-// 자식에서 꺼내서 사용하다
+// 자식에서 꺼내서 사용한다
 function UserMenu() {
   const { user, logout } = useContext(UserContext);
   const theme = useContext(ThemeContext);
@@ -80,7 +79,7 @@ export default function ContextApi() {
 
   /* 
   Provider로 전달할 값, 
-  함수도 같이 보낼 수 있다 ==> 자식이 부모 상태를 변경 할 수 있다 라는 의미히다.
+  함수도 같이 보낼 수 있다 ==> 자식이 부모 상태를 변경할 수 있다 라는 의미이다.
    */
   const userValue = { user, logout: () => setUser(null) };
 
@@ -104,7 +103,7 @@ export default function ContextApi() {
         )}
       </div>
 
-      {/* Provider: 감싼 공간안에선 useContext로 값을 꺼낼 수 있다 */}
+      {/* Provider: 감싼 공간 안에선 useContext로 값을 꺼낼 수 있다 */}
       <UserContext value={userValue}>
         <ThemeContext value={theme}>
           <Layout />

@@ -2,9 +2,14 @@ import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 import RenderBadge from "../../components/RenderBadge";
 
+/*
+ * store는
+ * 앱 전체에서 같이 쓰는 상태(데이터)와 그 상태를 바꾸는 함수를 모아 둔 저장소. 이 파일에서는 Zustand의 create로 만든 useDemoStore가 store이다.
+ * */
+
 // store
 const useDemoStore = create((set) => ({
-  // 상태값(conut, memo) 두가지 가지고 있음
+  // 상태값(count, memo) 두 가지 가지고 있음
   count: 0,
   memo: "",
   increase: () => set((state) => ({ count: state.count + 1 })),
@@ -12,12 +17,12 @@ const useDemoStore = create((set) => ({
 }));
 
 /* Selector
- *  - store에서 무엇을 꺼낼지 결정하는 함수 이다.
+ *  - store에서 무엇을 꺼낼지 결정하는 함수이다.
  * 특징
- * - 컴포넌트는 selector가 고른 값이 바뀔때만 다시 랜더링 됨. (선택적 구독)
+ * - 컴포넌트는 selector가 고른 값이 바뀔 때만 다시 렌더링 됨. (선택적 구독)
  */
 function WholeStoreCounter() {
-  // 애는 지금 selector이 없이 사용하고 있음
+  // 얘는 지금 selector 없이 사용하고 있음
   const { count } = useDemoStore();
 
   return (
@@ -45,7 +50,7 @@ function SelectedCounter() {
 function ShallowCounter() {
   /*
    ** useShallow**
-   * Store에서 state, action을 한 번에 꺼내오고 싶을때 사용 (한줄씩 쓰는거랑 동일하다)
+   * Store에서 state, action을 한 번에 꺼내 오고 싶을 때 사용 (한 줄씩 쓰는 거랑 동일하다)
    * => 여러 값을 객체로 한 번에 꺼내고 싶을 때 사용한다.
    *
    */
@@ -53,6 +58,8 @@ function ShallowCounter() {
   /*const { count, increase } = useDemoStore(
     useShallow((state) => ({ count: state.count, increase: state.increase })),
   ); */
+  // const count = useDemoStore((state) => state.count);
+  // const increase = useDemoStore((state) => state.increase);
 
   // 방법 2: useShallow (한 번에 객체로 여러 개)
   const { count, increase } = useDemoStore(
