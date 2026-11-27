@@ -18,6 +18,8 @@
 // ✅ 확인: 어느 칸에 입력해도 반대쪽이 바로 바뀐다
 // 💡 두 컴포넌트가 같은 데이터를 써야 하면 → state를 가장 가까운 공통 부모로 올린다
 // 📖 막히면: 07-2 예제 ② 환율 계산기
+
+// 지금 만드는 기능: 길이 변환기()
 import { useState } from "react";
 
 const RATIO = 2.54; // 1 inch = 2.54 cm
@@ -33,7 +35,7 @@ function toCm(inch) {
 }
 
 // TODO 1. state를 지우고 props로 받기
-function LengthInput({ label }) {
+function LengthInput({ label, value, onChange }) {
   //const [value, setValue] = useState('')
   return (
     <label>
@@ -42,7 +44,7 @@ function LengthInput({ label }) {
         className="input"
         type="number"
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
       />
     </label>
   );
@@ -50,14 +52,29 @@ function LengthInput({ label }) {
 
 export default function Mission() {
   // TODO 2~3
+  // amount : 마지막으로 입력한 숫자(입력한 그대로, 문자열)
+  // unit : 그 숫자를 어느 칸에 입력했는지
+  const [length, setLength] = useState({ amount: "100", unit: "cm" });
+
+  const cm = length.unit === "cm" ? length.amount : toCm(length.amount);
+  const inch = length.unit === "inch" ? length.amount : toInch(length.amount);
+
   console.log("변환 함수 준비됨:", toCm("1"), toInch("2.54"));
 
   return (
     <div>
       <h3>📏 길이 변환기</h3>
       {/* TODO 4 */}
-      <LengthInput label="cm" />
-      <LengthInput label="inch" />
+      <LengthInput
+        label="cm"
+        value={cm}
+        onChange={(value) => setLength({ amount: value, unit: "cm" })}
+      />
+      <LengthInput
+        label="inch"
+        value={inch}
+        onChange={(value) => setLength({ amount: value, unit: "inch" })}
+      />
     </div>
   );
 }

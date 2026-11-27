@@ -20,30 +20,43 @@
 // ※ 고치기 전에 만들어진 타이머는 계속 돌고 있다 → 고친 뒤 새로고침(F5)하고 확인하자
 // 📖 막히면: 08-6 예제
 // 🤖 AI에게 물어볼 때: "타이머가 두 배로 빨라지고 꺼도 계속 돌아. useEffect에서 정리하지 않은 게 있는지 확인해 줘"
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 
 function StudyTimer() {
-  const [seconds, setSeconds] = useState(0)
+  const [seconds, setSeconds] = useState(0);
 
   useEffect(() => {
-    setInterval(() => {
-      console.log('⏱ tick')
-      setSeconds((prev) => prev + 1)
-    }, 1000)
-    // 🐞 정리(cleanup)가 없다
-  }, [])
+    const id = setInterval(() => {
+      console.log("⏱ tick");
+      setSeconds((prev) => prev + 1);
+    }, 1000);
 
-  return <h2>⏱ {seconds}초째 공부 중</h2>
+    return () => clearInterval(id);
+  }, []);
+  /* 🐞 타이머가 2초씩 올라가는 이유? => 
+    - setInterval로 타이머를 시작만 하고, 멈추지 않았다.
+    - effect를 실행 -> 정리 -> 다시실행 루프로 돌아가야 하는데 정리 코드가 있어 실행 -> 다시실행으로 타이머가 2개가 됐다
+    - setInterval이 돌려주는 타이머 번호를 변수(id)에 받아 둔다
+    - 정리함수를 리턴하고 그 안에서 id로 타이머를 멈춘다
+    - 정리함수는 React가 알아서 싱행한다. */
+
+  return <h2>⏱ {seconds}초째 공부 중</h2>;
 }
 
 export default function Mission() {
-  const [isOn, setIsOn] = useState(true)
+  const [isOn, setIsOn] = useState(true);
 
   return (
     <div>
       <h3>📚 공부 타이머</h3>
-      <button onClick={() => setIsOn(!isOn)}>{isOn ? '타이머 끄기' : '타이머 켜기'}</button>
-      {isOn ? <StudyTimer /> : <p>타이머가 꺼져 있습니다. 콘솔을 확인해 보세요.</p>}
+      <button onClick={() => setIsOn(!isOn)}>
+        {isOn ? "타이머 끄기" : "타이머 켜기"}
+      </button>
+      {isOn ? (
+        <StudyTimer />
+      ) : (
+        <p>타이머가 꺼져 있습니다. 콘솔을 확인해 보세요.</p>
+      )}
     </div>
-  )
+  );
 }

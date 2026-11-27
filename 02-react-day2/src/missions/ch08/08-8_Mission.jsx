@@ -22,63 +22,65 @@
 // 💡 dispatch는 "무슨 일이 일어났는지"만 알리고, "state를 어떻게 바꿀지"는 reducer가 정한다
 // 📖 막히면: 08-8 예제 (장바구니 reducer)
 // 🤖 AI 코드에서 useReducer를 만나면: reducer의 case 목록만 읽어도 이 화면에서 일어나는 일을 알 수 있다
-import { useState } from 'react'
+import { useReducer } from "react";
 
 const initialState = {
-  name: '',
-  email: '',
-  password: '',
+  name: "",
+  email: "",
+  password: "",
   agree: false,
   done: false,
-}
+};
 
 // TODO 1. reducer: (현재 state, action) → 새 state
 function signupReducer(state, action) {
   switch (action.type) {
-    // case 'changed':
-    // case 'toggled':
-    // case 'submitted':
-    // case 'reset':
+    case "changed":
+      return { ...state, [action.field]: action.value };
+    case "toggled":
+      return { ...state, agree: !state.agree };
+    case "submitted":
+      return { ...state, done: true };
+    case "reset":
+      return initialState;
     default:
-      return state
+      return state;
   }
 }
 
 export default function Mission() {
   // TODO 2. 아래 5줄을 useReducer 한 줄로
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [agree, setAgree] = useState(false)
-  const [done, setDone] = useState(false)
+  // const [name, setName] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [agree, setAgree] = useState(false);
+  // const [done, setDone] = useState(false);
+  const [state, dispatch] = useReducer(signupReducer, initialState);
 
-  const canSubmit = name && email && password.length >= 4 && agree
+  const canSubmit =
+    state.name && state.email && state.password.length >= 4 && state.agree;
 
   function handleSubmit(e) {
-    e.preventDefault()
-    if (!canSubmit) return
-    setDone(true) // TODO 3
+    e.preventDefault();
+    if (!canSubmit) return;
+    dispatch({ type: "submitted" }); // TODO 3
   }
 
   function handleReset() {
     // TODO 3
-    setName('')
-    setEmail('')
-    setPassword('')
-    setAgree(false)
-    setDone(false)
+    dispatch({ type: "reset" });
   }
 
-  if (done) {
+  if (state.done) {
     return (
       <article>
-        <h3>🎉 {name}님, 가입을 환영합니다!</h3>
-        <small>{email}</small>
+        <h3>🎉 {state.name}님, 가입을 환영합니다!</h3>
+        <small>{state.email}</small>
         <p>
           <button onClick={handleReset}>다시 쓰기</button>
         </p>
       </article>
-    )
+    );
   }
 
   return (
@@ -86,24 +88,43 @@ export default function Mission() {
       <h3>📝 회원가입</h3>
       <form onSubmit={handleSubmit}>
         <p>
-          <input placeholder="이름" value={name} onChange={(e) => setName(e.target.value)} />
+          <input
+            placeholder="이름"
+            value={state.name}
+            onChange={(e) =>
+              dispatch({ type: "changed", field: "name", value: e.target.value })
+            }
+          />
         </p>
         <p>
-          <input placeholder="이메일" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input
+            placeholder="이메일"
+            value={state.email}
+            onChange={(e) =>
+              dispatch({ type: "changed", field: "email", value: e.target.value })
+            }
+          />
         </p>
         <p>
           <input
             type="password"
             placeholder="비밀번호 (4자 이상)"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={state.password}
+            onChange={(e) =>
+              dispatch({ type: "changed", field: "password", value: e.target.value })
+            }
           />
         </p>
         <label>
-          <input type="checkbox" checked={agree} onChange={() => setAgree(!agree)} /> 약관에 동의합니다
+          <input
+            type="checkbox"
+            checked={state.agree}
+            onChange={() => dispatch({ type: "toggled" })}
+          />{" "}
+          약관에 동의합니다
         </label>
         <p>
-          <button disabled={!canSubmit}>가입하기</button>{' '}
+          <button disabled={!canSubmit}>가입하기</button>{" "}
           <button type="button" onClick={handleReset}>
             다시 쓰기
           </button>
@@ -111,8 +132,10 @@ export default function Mission() {
       </form>
       <article>
         <small>현재 state</small>
-        <pre>{JSON.stringify({ name, email, password, agree, done }, null, 2)}</pre>
+        <pre>
+          {JSON.stringify(state, null, 2)}
+        </pre>
       </article>
     </div>
-  )
+  );
 }

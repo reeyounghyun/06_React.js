@@ -15,18 +15,18 @@
 // ⚠️ 반대로 effect 안에서 "의존성에 있는 state를 set" 하면 무한 반복이 된다 → AI 코드에서 자주 보는 실수
 // 📖 막히면: 08-5 예제
 // 🤖 AI에게 물어볼 때: "이 useEffect의 의존성 배열에 빠진 값이 있는지 확인해 줘"
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 
-const GREETINGS = { ko: '안녕하세요', en: 'Hello', ja: 'こんにちは' }
+const GREETINGS = { ko: "안녕하세요", en: "Hello", ja: "こんにちは" };
 
 export default function Mission() {
-  const [name, setName] = useState('리액트')
-  const [lang, setLang] = useState('ko')
+  const [name, setName] = useState("리액트");
+  const [lang, setLang] = useState("ko");
 
   useEffect(() => {
-    console.log('effect 실행:', name, lang)
-    document.title = `${GREETINGS[lang]}, ${name}!`
-  }, [name]) // 🐞
+    console.log("effect 실행:", name, lang);
+    document.title = `${GREETINGS[lang]}, ${name}!`;
+  }, [name, lang]); // 🐞의존성 배열 수정함.
 
   return (
     <div>
@@ -35,7 +35,7 @@ export default function Mission() {
       </h3>
       <p>
         이름:
-        {['리액트', '뷰', '스벨트'].map((item) => (
+        {["리액트", "뷰", "스벨트"].map((item) => (
           <button key={item} onClick={() => setName(item)}>
             {item}
           </button>
@@ -51,5 +51,5 @@ export default function Mission() {
       </p>
       <small>👆 화면의 인사말과 브라우저 탭 제목을 비교해 보세요</small>
     </div>
-  )
+  );
 }
